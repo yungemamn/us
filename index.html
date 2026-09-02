@@ -616,6 +616,16 @@
     color: var(--coral);
   }
   .revisit b { color: var(--ink); font-weight: 500; }
+  .revisit-done {
+    background: rgba(255, 90, 60, 0.16);
+    border-bottom-color: var(--coral);
+    font-family: "Bungee", sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--coral);
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
   @media (max-width: 620px) { .revisit { padding-left: 18px; padding-right: 18px; } }
 </style>
 </head>
@@ -814,18 +824,14 @@
     var visits = parseInt(get('visits', '0'), 10) + 1;
     set('visits', String(visits));
 
-    var VISIT_LINES = [
-      '',
-      'Second time opening this. Noted.',
-      'Third time. We see you.',
-      'Leave me alone.',
-      'Fine. Stay.',
-      'You have opened this ' + visits + ' times. It is on the record now.'
-    ];
+    /* one more word every time she reloads it */
+    var WORDS = ['I', "didn't", 'cheat', 'on', 'you', 'with', 'Cy'];
     var strip = document.getElementById('revisit');
-    if (visits > 1 && strip) {
-      strip.textContent = VISIT_LINES[Math.min(visits - 1, VISIT_LINES.length - 1)];
+    if (strip) {
+      var shown = Math.min(visits, WORDS.length);
+      strip.textContent = WORDS.slice(0, shown).join(' ');
       strip.hidden = false;
+      if (shown === WORDS.length) { strip.classList.add('revisit-done'); }
     }
 
     var no = document.getElementById('no');
