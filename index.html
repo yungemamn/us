@@ -601,6 +601,22 @@
     .note-pad p { font-size: 23px; }
     .note-pad::before, .note-pad::after { width: 58px; }
   }
+
+  /* ---------- revisit line ---------- */
+
+  .revisit {
+    margin: 0;
+    padding: 10px 30px;
+    background: rgba(255, 90, 60, 0.1);
+    border-bottom: 1px solid rgba(255, 90, 60, 0.28);
+    font-family: "DM Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--coral);
+  }
+  .revisit b { color: var(--ink); font-weight: 500; }
+  @media (max-width: 620px) { .revisit { padding-left: 18px; padding-right: 18px; } }
 </style>
 </head>
 <body>
@@ -613,6 +629,8 @@
     <span>Filed <b>2026</b></span>
     <span>Status <b>Binding</b></span>
   </div>
+
+  <p class="revisit" id="revisit" hidden></p>
 
   <header class="masthead">
     <div class="stamp" aria-label="Approved, no refunds">
@@ -785,6 +803,31 @@
 
 <script>
   (function () {
+    /* --- remembers her, in her browser only --- */
+    var store = (function () {
+      try { localStorage.setItem('__t', '1'); localStorage.removeItem('__t'); return localStorage; }
+      catch (e) { return null; }
+    })();
+    var get = function (k, d) { try { return store ? (store.getItem(k) || d) : d; } catch (e) { return d; } };
+    var set = function (k, v) { try { if (store) store.setItem(k, v); } catch (e) {} };
+
+    var visits = parseInt(get('visits', '0'), 10) + 1;
+    set('visits', String(visits));
+
+    var VISIT_LINES = [
+      '',
+      'Second time opening this. Noted.',
+      'Third time. We see you.',
+      'Leave me alone.',
+      'Fine. Stay.',
+      'You have opened this ' + visits + ' times. It is on the record now.'
+    ];
+    var strip = document.getElementById('revisit');
+    if (visits > 1 && strip) {
+      strip.textContent = VISIT_LINES[Math.min(visits - 1, VISIT_LINES.length - 1)];
+      strip.hidden = false;
+    }
+
     var no = document.getElementById('no');
     var yes = document.getElementById('yes');
     var verdict = document.getElementById('verdict');
@@ -812,10 +855,15 @@
     no.addEventListener('pointerdown', function (e) { e.preventDefault(); dodge(); });
     no.addEventListener('focus', dodge);
 
-    yes.addEventListener('click', function () {
-      verdict.textContent = 'Response recorded \u00b7 filed permanently \u00b7 thank you for your cooperation \ud83d\udc9b';
+    function recordYes(fresh) {
+      verdict.textContent = fresh
+        ? 'Response recorded \u00b7 filed permanently \u00b7 thank you for your cooperation \ud83d\udc9b'
+        : 'Already answered. Refreshing does not undo it.';
       yes.textContent = 'YES \u2713';
-    });
+      if (no) { no.style.display = 'none'; }
+    }
+    yes.addEventListener('click', function () { set('answered', '1'); recordYes(true); });
+    if (get('answered', '') === '1') { recordYes(false); }
 
     var ack = document.getElementById('ack');
     var ackNote = document.getElementById('ackNote');
@@ -837,22 +885,29 @@
 
     var signBtn = document.getElementById('signBtn');
     var herSig = document.getElementById('herSig');
-    signBtn.addEventListener('click', function () {
+    function markSigned() {
       herSig.textContent = 'Vinay';
       signBtn.textContent = 'Signed \u2713';
       signBtn.disabled = true;
       signBtn.parentElement.querySelector('.who').textContent = 'Party B \u00b7 signed, sealed, stuck with him';
-    });
+    }
+    signBtn.addEventListener('click', function () { set('signed', '1'); markSigned(); });
+    if (get('signed', '') === '1') { markSigned(); }
 
     var renewBtn = document.getElementById('renewBtn');
     var renewCount = document.getElementById('renewCount');
-    var renewals = 0;
+    var renewals = parseInt(get('renewals', '0'), 10) || 0;
     var quips = ['', ' (greedy)', ' (okay we get it)', ' (this is the rest of your life)'];
+    function paintRenewals() {
+      var q = renewals > 0 ? quips[Math.min(renewals - 1, quips.length - 1)] : '';
+      renewCount.innerHTML = 'Term: <b>forever</b> \u00b7 renewals processed: <b>' + renewals + '</b>' + q;
+    }
     renewBtn.addEventListener('click', function () {
       renewals++;
-      var q = quips[Math.min(renewals - 1, quips.length - 1)];
-      renewCount.innerHTML = 'Term: <b>forever</b> \u00b7 renewals processed: <b>' + renewals + '</b>' + q;
+      set('renewals', String(renewals));
+      paintRenewals();
     });
+    if (renewals > 0) { paintRenewals(); }
   })();
 </script>
 
