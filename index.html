@@ -539,6 +539,68 @@
     .stamp { animation: none; }
     .btn, .btn-no, .renew-btn { transition: none; }
   }
+
+  /* ---------- handwritten addendum ---------- */
+
+  .addendum { background: var(--paper-2); }
+  .note-wrap { padding: 6px 4px 10px; }
+  .note-pad {
+    position: relative;
+    transform: rotate(-1deg);
+    background:
+      linear-gradient(90deg, transparent 0 40px, rgba(255, 90, 60, 0.32) 40px 41px, transparent 41px),
+      repeating-linear-gradient(180deg, transparent 0 31px, rgba(11, 50, 67, 0.10) 31px 32px),
+      #FFF6D2;
+    border: 1px solid #E7D49A;
+    border-radius: 2px;
+    box-shadow: 0 10px 26px rgba(11, 50, 67, 0.18);
+    padding: 26px 26px 30px 56px;
+  }
+  .note-pad::before,
+  .note-pad::after {
+    content: "";
+    position: absolute;
+    top: -12px;
+    width: 78px;
+    height: 26px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(11, 50, 67, 0.08);
+    box-shadow: 0 1px 3px rgba(11, 50, 67, 0.12);
+  }
+  .note-pad::before { left: 26px; transform: rotate(-4deg); }
+  .note-pad::after { right: 26px; transform: rotate(3deg); }
+
+  .note-pad p {
+    font-family: "Caveat", cursive;
+    font-size: 25px;
+    line-height: 32px;
+    color: #17456B;
+    margin: 0 0 32px;
+    max-width: 34ch;
+  }
+  .note-pad p:last-of-type { margin-bottom: 0; }
+  .note-sign {
+    font-family: "Caveat", cursive;
+    font-size: 34px;
+    line-height: 32px;
+    color: var(--vest-deep);
+    margin-top: 32px;
+  }
+  .note-stamp {
+    font-family: "DM Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--kelp);
+    margin: 14px 0 0;
+    padding-left: 4px;
+  }
+
+  @media (max-width: 620px) {
+    .note-pad { padding: 24px 18px 26px 44px; transform: rotate(-0.6deg); }
+    .note-pad p { font-size: 23px; }
+    .note-pad::before, .note-pad::after { width: 58px; }
+  }
 </style>
 </head>
 <body>
@@ -695,6 +757,21 @@
     <div class="renew">
       <button class="renew-btn" id="renewBtn" type="button">RENEW FOR ANOTHER YEAR</button>
       <p class="renew-count" id="renewCount">Term: <b>forever</b> &#183; renewals processed: <b>0</b></p>
+    </div>
+  </section>
+
+
+  <section class="addendum">
+    <div class="sec-head"><span class="sec-no">06</span><h2 class="sec-title">Addendum &#8212; handwritten</h2></div>
+    <div class="note-wrap">
+      <div class="note-pad">
+        <p>Vinay &#8212;</p>
+        <p>The form is a joke. The pictures aren't.</p>
+        <p>808,000 people watch the videos. You're the one who sees me in a durag losing an argument about where we're eating, and you still pull up.</p>
+        <p>I'd renew this thing every day.</p>
+        <p class="note-sign">&#8212; E</p>
+      </div>
+      <p class="note-stamp">Not typed. Not printed. Attached to the form by hand.</p>
     </div>
   </section>
 
